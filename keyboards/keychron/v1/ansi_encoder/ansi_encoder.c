@@ -148,4 +148,44 @@ led_config_t g_led_config = {
     }
 };
 
+bool rgb_matrix_indicators_user(void) {
+    if (host_keyboard_led_state().caps_lock) {
+        HSV hsv = {0, 255, 255};  // Red
+        RGB rgb_on = hsv_to_rgb(hsv);
+        RGB rgb_off = {0, 0, 0};
+
+        #define LED(r, c) (g_led_config.matrix_co[(r)][(c)])
+
+        const uint8_t keys_on[] = {
+            LED(3,0), // Caps Lock
+            LED(2,0), // Tab
+            LED(2,1), // Q
+            LED(3,1), // A
+            LED(4,2), // Z
+            LED(4,0), // Left Shift
+        };
+
+        const uint8_t keys_off[] = {
+            LED(5,0), // Left Ctrl
+            LED(5,1), // Left Win
+            LED(5,2), // Left Alt
+            LED(4,3), // X
+            LED(3,2), // S
+            LED(2,2), // W
+            LED(1,2), // 2
+            LED(1,1), // 1
+            LED(1,0), // `
+        };
+
+        for (uint8_t i = 0; i < sizeof(keys_on) / sizeof(keys_on[0]); i++) {
+            rgb_matrix_set_color(keys_on[i], rgb_on.r, rgb_on.g, rgb_on.b);
+        }
+
+        for (uint8_t i = 0; i < sizeof(keys_off) / sizeof(keys_off[0]); i++) {
+            rgb_matrix_set_color(keys_off[i], rgb_off.r, rgb_off.g, rgb_off.b);
+        }
+    }
+    return true;
+}
+
 #endif // RGB_MATRIX_ENABLE
